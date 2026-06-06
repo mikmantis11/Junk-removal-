@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Junk Removal Estimator</title>
+
+<style>
+
+body{
+
+    font-family:Arial,sans-serif;
+
+    background:#f4f4f4;
+
+    margin:0;
+
+    padding:20px;
+
+}
+
+.container{
+
+    max-width:700px;
+
+    margin:auto;
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:10px;
+
+    box-shadow:0 0 10px rgba(0,0,0,.15);
+
+}
+
+h1,h2{
+
+    text-align:center;
+
+}
+
+label{
+
+    display:block;
+
+    margin-top:10px;
+
+    font-weight:bold;
+
+}
+
+input,select{
+
+    width:100%;
+
+    padding:10px;
+
+    margin-top:5px;
+
+    box-sizing:border-box;
+
+}
+
+button{
+
+    width:100%;
+
+    padding:12px;
+
+    margin-top:15px;
+
+    border:none;
+
+    border-radius:5px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+}
+
+.calc{
+
+    background:#28a745;
+
+    color:white;
+
+}
+
+.save{
+
+    background:#007bff;
+
+    color:white;
+
+}
+
+.result{
+
+    margin-top:20px;
+
+    background:#eee;
+
+    padding:15px;
+
+    border-radius:5px;
+
+}
+
+.estimate{
+
+    background:#fafafa;
+
+    border:1px solid #ddd;
+
+    padding:10px;
+
+    margin-top:10px;
+
+    border-radius:5px;
+
+}
+
+.deleteBtn{
+
+    background:#dc3545;
+
+    color:white;
+
+    width:auto;
+
+    margin-top:10px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Junk Removal Estimator</h1>
+
+<h2>Customer Information</h2>
+
+<label>Name</label>
+
+<input id="name">
+
+<label>Phone</label>
+
+<input id="phone">
+
+<label>Address</label>
+
+<input id="address">
+
+<h2>Job Information</h2>
+
+<label>Load Size</label>
+
+<select id="loadSize">
+
+<option value="75">Minimum Pickup - $75</option>
+
+<option value="125">1/8 Load - $125</option>
+
+<option value="200">1/4 Load - $200</option>
+
+<option value="275">3/8 Load - $275</option>
+
+<option value="350">1/2 Load - $350</option>
+
+<option value="425">5/8 Load - $425</option>
+
+<option value="500">3/4 Load - $500</option>
+
+<option value="575">7/8 Load - $575</option>
+
+<option value="650">Full Load - $650</option>
+
+</select>
+
+<label>Workers</label>
+
+<input type="number" id="workers" value="2">
+
+<label>Hours Worked</label>
+
+<input type="number" step="0.1" id="hours" value="2">
+
+<label>Hourly Rate Per Worker ($)</label>
+
+<input type="number" id="hourlyRate" value="30">
+
+<label>Round Trip Miles</label>
+
+<input type="number" id="miles" value="20">
+
+<label>Cost Per Mile ($)</label>
+
+<input type="number" id="mileRate" value="1">
+
+<label>Dump Fee ($)</label>
+
+<input type="number" id="dumpFee" value="0">
+
+<label>Heavy Item Surcharge ($)</label>
+
+<input type="number" id="surcharge" value="0">
+
+<button class="calc" onclick="calculateEstimate()">Calculate Estimate</button>
+
+<div id="result" class="result">
+
+Estimate will appear here.
+
+</div>
+
+<button class="save" onclick="saveEstimate()">Save Estimate</button>
+
+<h2>Saved Estimates</h2>
+
+<div id="savedEstimates"></div>
+
+</div>
+
+<script>
+
+let currentEstimate = null;
+
+function calculateEstimate(){
+
+const loadPrice =
+
+Number(document.getElementById("loadSize").value);
+
+const workers =
+
+Number(document.getElementById("workers").value);
+
+const hours =
+
+Number(document.getElementById("hours").value);
+
+const hourlyRate =
+
+Number(document.getElementById("hourlyRate").value);
+
+const miles =
+
+Number(document.getElementById("miles").value);
+
+const mileRate =
+
+Number(document.getElementById("mileRate").value);
+
+const dumpFee =
+
+Number(document.getElementById("dumpFee").value);
+
+const surcharge =
+
+Number(document.getElementById("surcharge").value);
+
+const labor =
+
+workers * hours * hourlyRate;
+
+const travel =
+
+miles * mileRate;
+
+const total =
+
+loadPrice +
+
+labor +
+
+travel +
+
+dumpFee +
+
+surcharge;
+
+currentEstimate = total;
+
+document.getElementById("result").innerHTML = `
+
+<b>Load:</b> $${loadPrice.toFixed(2)}<br>
+
+<b>Labor:</b> $${labor.toFixed(2)}<br>
+
+<b>Travel:</b> $${travel.toFixed(2)}<br>
+
+<b>Dump Fee:</b> $${dumpFee.toFixed(2)}<br>
+
+<b>Surcharge:</b> $${surcharge.toFixed(2)}<br><br>
+
+<h2>Total Estimate: $${total.toFixed(2)}</h2>
+
+`;
+
+}
+
+function saveEstimate(){
+
+if(currentEstimate === null){
+
+alert("Calculate estimate first.");
+
+return;
+
+}
+
+const estimate = {
+
+date:new Date().toLocaleString(),
+
+name:document.getElementById("name").value,
+
+phone:document.getElementById("phone").value,
+
+address:document.getElementById("address").value,
+
+total:currentEstimate
+
+};
+
+const estimates =
+
+JSON.parse(localStorage.getItem("junkEstimates")) || [];
+
+estimates.push(estimate);
+
+localStorage.setItem(
+
+"junkEstimates",
+
+JSON.stringify(estimates)
+
+);
+
+loadEstimates();
+
+alert("Estimate Saved");
+
+}
+
+function loadEstimates(){
+
+const container =
+
+document.getElementById("savedEstimates");
+
+container.innerHTML = "";
+
+const estimates =
+
+JSON.parse(localStorage.getItem("junkEstimates")) || [];
+
+estimates.forEach((estimate,index)=>{
+
+container.innerHTML += `
+
+<div class="estimate">
+
+<b>${estimate.name}</b><br>
+
+${estimate.phone}<br>
+
+${estimate.address}<br>
+
+<b>Total:</b> $${estimate.total.toFixed(2)}<br>
+
+<small>${estimate.date}</small><br>
+
+<button class="deleteBtn"
+
+onclick="deleteEstimate(${index})">
+
+Delete
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+function deleteEstimate(index){
+
+const estimates =
+
+JSON.parse(localStorage.getItem("junkEstimates")) || [];
+
+estimates.splice(index,1);
+
+localStorage.setItem(
+
+"junkEstimates",
+
+JSON.stringify(estimates)
+
+);
+
+loadEstimates();
+
+}
+
+loadEstimates();
+
+</script>
+
+</body>
+
+</html>
