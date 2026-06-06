@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Junk Removal Calculator</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #f4f4f4;
+    }
+
+    .container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        box-sizing: border-box;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 20px;
+        border: none;
+        background: #28a745;
+        color: white;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #218838;
+    }
+
+    .result {
+        margin-top: 20px;
+        padding: 15px;
+        background: #e9ecef;
+        border-radius: 5px;
+        font-size: 18px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Junk Removal Calculator</h1>
+
+    <label>Number of Workers</label>
+    <input type="number" id="workers" value="2">
+
+    <label>Hours Worked</label>
+    <input type="number" id="hours" step="0.1" value="2">
+
+    <label>Hourly Rate Per Worker ($)</label>
+    <input type="number" id="hourlyRate" value="30">
+
+    <label>Round Trip Miles</label>
+    <input type="number" id="miles" value="20">
+
+    <label>Cost Per Mile ($)</label>
+    <input type="number" id="mileRate" value="1">
+
+    <label>Number of Trailer Loads</label>
+    <input type="number" id="loads" step="0.25" value="1">
+
+    <label>Price Per Trailer Load ($)</label>
+    <input type="number" id="loadRate" value="150">
+
+    <label>Dump Fees ($)</label>
+    <input type="number" id="dumpFees" value="0">
+
+    <label>Heavy Item Surcharge ($)</label>
+    <input type="number" id="surcharge" value="0">
+
+    <button onclick="calculate()">Calculate Price</button>
+
+    <div class="result" id="result">
+        Total Price: $0
+    </div>
+</div>
+
+<script>
+function calculate() {
+    let workers = Number(document.getElementById("workers").value);
+    let hours = Number(document.getElementById("hours").value);
+    let hourlyRate = Number(document.getElementById("hourlyRate").value);
+
+    let miles = Number(document.getElementById("miles").value);
+    let mileRate = Number(document.getElementById("mileRate").value);
+
+    let loads = Number(document.getElementById("loads").value);
+    let loadRate = Number(document.getElementById("loadRate").value);
+
+    let dumpFees = Number(document.getElementById("dumpFees").value);
+    let surcharge = Number(document.getElementById("surcharge").value);
+
+    let labor = workers * hours * hourlyRate;
+    let travel = miles * mileRate;
+    let volume = loads * loadRate;
+
+    let total = labor + travel + volume + dumpFees + surcharge;
+
+    document.getElementById("result").innerHTML =
+        `
+        Labor: $${labor.toFixed(2)}<br>
+        Travel: $${travel.toFixed(2)}<br>
+        Volume: $${volume.toFixed(2)}<br>
+        Dump Fees: $${dumpFees.toFixed(2)}<br>
+        Surcharge: $${surcharge.toFixed(2)}<br><br>
+        <strong>Total Price: $${total.toFixed(2)}</strong>
+        `;
+}
+</script>
+
+</body>
+</html>
